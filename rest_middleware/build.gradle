@@ -19,11 +19,9 @@ ext {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'maven-publish'
 
 group 'com.laszloszoboszlai.fabricservice'
 sourceCompatibility = 1.8
-def baseName = rootProject.name
 
 repositories {
     mavenCentral()
@@ -33,6 +31,7 @@ dependencies {
    // compile('org.springframework.cloud:spring-cloud-starter-eureka-server')
     compile('org.springframework.boot:spring-boot-starter-logging')
     compile('biz.paluch.logging:logstash-gelf:1.11.1')
+    compile('org.hyperledger.fabric-sdk-java:fabric-sdk-java:1.0.1')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
