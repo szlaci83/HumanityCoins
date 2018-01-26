@@ -20,28 +20,10 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'maven-publish'
-apply from: "$project.rootDir/release/release.gradle"
 
-version = ext.versionName
-group 'com.laszloszoboszlai.humanitycoins'
+group 'com.laszloszoboszlai.fabricservice'
 sourceCompatibility = 1.8
 def baseName = rootProject.name
-
-task getUpdatedVersion {
-    if (rootProject.ext.commitNumber != 0) {
-        version = version + '-' +rootProject.ext.commitNumber + '-SNAPSHOT'
-    }
-    println("VERSION: " + version)
-}
-
-jar {
-    version = "$version"
-
-    //So we don't reproduce the main jar without springboot when we're publishing the jar to nexus
-    onlyIf {
-        !file("./build/libs/" + baseName + "-" + "$version" + ".jar").exists()
-    }
-}
 
 repositories {
     mavenCentral()
@@ -58,33 +40,4 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
-}
-
-task checkPublishing {
-    doLast {
-        tasks.matching { it.name.contains("PublicationToMavenRepository") }.all {
-            onlyIf { rootProject.ext.commitNumber == 0 || rootProject.ext.isSnapshotRelease }
-        }
-    }
-}
-publishSnapshot.finalizedBy checkPublishing
-checkPublishing.finalizedBy publish
-publish.dependsOn checkPublishing
-
-publishing {
-    publications {
-        base(MavenPublication) {
-
-            groupId "$group"
-            artifactId "$baseName"
-            version "$version"
-
-            from components.java
-
-        }
-    }
-
-    repositories {
-
-        }
 }
