@@ -29,33 +29,7 @@ Attributes of a thank:
 	3.message (a small message explaining the thank, can be empty)
 
 # Project setup:
-To try out the project, follow the following guide to install the perequisits:
-https://hyperledger-fabric.readthedocs.io/en/latest/prereqs.html
 
+cd $GOPATH/go/src/github.com/szlaci83/HumanityCoins/ && dep ensure
 
-Demo can be run with /demo/startFabric.sh script which starts up the relevant docker containers,
-deploys the chaincode and run an invoke method. 
-
-
-Alternatively it can be deployed into a chaincode development docker network:
-https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html
-
-## Replace the Terminal 2 and 3 parts with the following:
-### Terminal 2:
-
-cd humanity
-
-go build
-
-CORE_PEER_ADDRESS=peer:7051 CORE_CHAINCODE_ID_NAME=mycc:0 ./humanity
-
-### Terminal 3:
-docker exec -it cli bash
-
-peer chaincode install -p chaincodedev/chaincode/humanity -n mycc -v 0
-
-peer chaincode instantiate -n mycc -v 0 -c '{"Args":["alice","10", "bob","20"]}' -C myc
-
-peer chaincode invoke -n mycc -c '{"Function":"addThanks", "Args": ["bob","{\"name\":\"alice\",\"type\":\"thankyou\",\"message\":\"for being good\"}"]}' -C myc
-
-peer chaincode query -n mycc -c '{"Function":"getUser", "Args":["alice"]}' -C myc
+cd $GOPATH/src/github.com/szlaci83/HumanityCoins/fixtures/ && docker-compose up -d && cd .. && ./HumanityCoins 
