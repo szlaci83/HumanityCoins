@@ -2,7 +2,7 @@ package test
 
 import (
     "fmt"
-    "github.com/chainHero/heroes-service/web/controllers"
+    "github.com/szlaci83/HumanityCoins/web/controllers"
 )
 
 func Serve(app *controllers.Application) {
