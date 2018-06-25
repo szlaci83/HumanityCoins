@@ -37,8 +37,13 @@
 	}
 
 // keyList to contain all keys for the users, so we could select one randomly
-	type keyList struct {
+	type userList struct {
 		Keys []string `json:"keys"`
+	}
+
+	func (e *userList) AddUser(user string) []string {
+		e.Keys = append(e.Keys, user)
+		return e.Keys
 	}
 
 // Each thank contains:
@@ -67,7 +72,7 @@ func (t *HumanityChaincode) addUser(stub shim.ChaincodeStubInterface, args []str
 	var userID string       // name of the user to be registered on the chain
 	var pointsToAdd int     // points to start with
 	var err error
-	keyListObj := keyList{}
+	
 
 	if len(args) %2 != 0  {
 		return "", fmt.Errorf("Incorrect number of args. Needs to be even: (ID, points), got:" + strings.Join(args, ", "))
@@ -81,8 +86,6 @@ func (t *HumanityChaincode) addUser(stub shim.ChaincodeStubInterface, args []str
 			return "", fmt.Errorf("Expecting integer value for initial points")
 		}
 	  entityObj := entity{}
-		// add the username to the list of users
-		keyListObj.Keys = append(keyListObj.Keys, userID)
 
   	// fill entity struct
   	entityObj.UserID = userID
@@ -102,8 +105,22 @@ func (t *HumanityChaincode) addUser(stub shim.ChaincodeStubInterface, args []str
 	  }
 	}
 
+	// get user data from ledger:
+	userlistJSON, err := stub.GetState("users")
+	if userlistJSON == nil {
+		return "", fmt.Errorf("Error: No account exists for user.")
+	}
+
+	userlistOBJ := userList{}
+	err = json.Unmarshal(userlistJSON, &userlistOBJ)
+	if err != nil {
+		  return "", fmt.Errorf("Invalid entity data pulled from ledger.")
+	  }
+
+	userlistOBJ.AddUser(userID)
+
 	// convert keylist struct to keyListJSON
-	keyListJson, err := json.Marshal(keyListObj)
+	keyListJson, err := json.Marshal(userlistOBJ.Keys)
 	if err != nil || keyListJson == nil {
 		return "", fmt.Errorf("Converting entity struct to keyListJSON failed")
 	}
